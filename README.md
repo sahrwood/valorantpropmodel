@@ -1,18 +1,30 @@
 # Valorant Prop Model: A Production-Grade Esports Predictive Engine
 
-This repository contains the data pipeline behind a proprietary Valorant player-kill projection model. This system outputs projections designed to outperform industry lines from Prizepicks and Underdog (1st 2 map player kills) in accuracy and line availability, with fully leak-proof historical backtesteing, patch-aware decay weighting, and multi-stage probability modeling, from predicting maps, to agents, to kills. 
+This repository contains the data pipeline behind a proprietary Valorant player-kill projection model. This system outputs projections designed to outperform industry lines from Prizepicks and Underdog (1st 2 map player kills) in accuracy and line availability, with fully leak-proof historical backtesting, patch-aware decay weighting, and multi-stage probability modeling, from predicting maps, to agents, to kills. 
 
-Highlights:
-- End-to end predictive pipeline: Raw round stats to per-player kill projections
+## Highlights:
+- End-to-end predictive pipeline: Raw round stats to per-player kill projections
 - Dynamic patch + recency weighting: models update automatically as metas shift
 - Roster stability metrics: Quantifies continuity in assessing roster turnover
 - Composition-aware agent predictions: Enforces role balance and meta realism
 - Leak-proof backtesting: Strictly chronological feature construction
-- Outperforms major sportsbooks: Superior error metrics and results on 1st 2 map player kills lines
 - Technology Stack: Python, pandas, numpy, XGBoost, scikit-learn
 
 Below I have a detailed walkthrough of every component in the pipeline and its role in the system
-- Repository includes up to the agent probabilities script; beyond that is withheld. 
+- This repository includes the full data and modeling pipeline through agent probability generation, showcasing the same architecture used in production. Proprietary extensions, including the kill prediction engine, sportsbook integration, and the engine for making predictions live are withheld.
+
+## Repository Structure
+- `vlr_patchpool_demo.ipynb`: Builds team-level match context and roster stability metrics.
+  
+- `vlr_matchstats_with_matchid_demo.ipynb`: Merges match IDs for downstream joins
+  
+- `vlr_features_demo.ipynb` : Constructs player-map feature sets
+  
+- `vlr_map_preds_demo.ipynb`: Predicts map selections
+  
+- `vlr_agent_probs_demo.ipynb` : Predicts per-player agent probabilities
+
+All demo notebooks are fully runnable from the included CSVs. 
 
 ## vlr_patchpool.csv
 
@@ -24,7 +36,7 @@ The **round stats csv** provides game_ids, map level keys, and round level resul
 
 The **match stats csv** contains lot of essential context: the game (map) id core key, match datetime, picks and bans (parsed into team, priority specific columns), match patch, map name, team names, competition name, and match_best_of, containing the best of format. We consolidate important information that delineates a match: the date/time, team1 and team 2 names, the competition name (tournament), and whether it is a best of 3 or 5. From there, we attach map ids (ordered game_ids), the relevant pick and ban columns, and attach per map round-differentials. Map names are backfilled and patch information is standardized and added in.
 
-Within the script itself, some other important additions include consecutive game-id enforcement at a match level, which ensures matches with forfeits/missing maps are skipped and row filters for data quality (ensuring a full 7 map pool, presence of patch/round differential, 2+ map picks). There also is creation of roster stability features, that indicate how long different ratios of the roster (3/5 players, 4/5 players, 5/5 players) have been together on the same team which is derived from historical series ordering.
+Within the script itself, some other important additions include consecutive game-id enforcement at a match level, which ensures matches with forfeits/missing maps are skipped and row filters for data quality (ensuring a full 7 map pool, presence of patch/round differential, 2+ map picks). There is also creation of roster stability features, that indicate how long different ratios of the roster (3/5 players, 4/5 players, 5/5 players) have been together on the same team which is derived from historical series ordering.
 
 ## vlr_matchstats_with_matchid
 
@@ -105,3 +117,10 @@ Ingests features, agent coefs, future map and agent preds to produce neutral kpr
 ## future_preds
 
 Similar logic to backtesting kill preds, but with futurified versions of agent probs, neutral kpr, joins/keys on datetime, team names, player handles instead of matchid. Leakproof lookups on decays, coefs, neutral kpr that guarantees no forward lookaheads. Decays/shrink calculated the same. Future script doesn't train, instead loading the trained XGB model and bias from backtest pipeline, which it applies to future rows. Same final output in terms of kill series projections.
+
+The released modules are fully runnable from the included historical data, providing a transparent look into the modeling architecture behind a production-grade esports prop system.
+
+### License
+© 2025 Sam Harwood.  
+Public release for research and educational purposes only.  
+Commercial use or redistribution without permission is prohibited.
