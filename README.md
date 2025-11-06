@@ -1,4 +1,18 @@
-# Valorant Prop Model Documentation
+# Valorant Prop Model: A Production-Grade Esports Predictive Engine
+
+This repository contains the data pipeline behind a proprietary Valorant player-kill projection model. This system outputs projections designed to outperform industry lines from Prizepicks and Underdog (1st 2 map player kills) in accuracy and line availability, with fully leak-proof historical backtesteing, patch-aware decay weighting, and multi-stage probability modeling, from predicting maps, to agents, to kills. 
+
+Highlights:
+- End-to end predictive pipeline: Raw round stats to per-player kill projections
+- Dynamic patch + recency weighting: models update automatically as metas shift
+- Roster stability metrics: Quantifies continuity in assessing roster turnover
+- Composition-aware agent predictions: Enforces role balance and meta realism
+- Leak-proof backtesting: Strictly chronological feature construction
+- Outperforms major sportsbooks: Superior error metrics and results on 1st 2 map player kills lines
+- Technology Stack: Python, pandas, numpy, XGBoost, scikit-learn
+
+Below I have a detailed walkthrough of every component in the pipeline and its role in the system
+- Repository includes up to the agent probabilities script; beyond that is withheld. 
 
 ## vlr_patchpool.csv
 
